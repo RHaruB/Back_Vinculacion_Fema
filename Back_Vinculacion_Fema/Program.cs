@@ -1,18 +1,29 @@
 // test merge
+using Back_Vinculacion_Fema.Models.DbModels;
+using Back_Vinculacion_Fema.Models.Utilidades;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+#region Swagger services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+#endregion
 
+#region BD services
+builder.Services.AddDbContext<vinculacionfemaContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+#endregion
+
+#region JWT services
+builder.Services.AddAuthorization();
+Token.AddJwtAuthentication(builder.Services);
+#endregion
 var app = builder.Build();
-
-
-//esto hice de prueba 
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -23,6 +34,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
