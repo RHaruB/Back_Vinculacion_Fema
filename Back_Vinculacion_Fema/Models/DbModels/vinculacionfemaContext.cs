@@ -44,7 +44,8 @@ namespace Back_Vinculacion_Fema.Models.DbModels
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Name=ConnectionStrings:DefaultConnection");
+                //optionsBuilder.UseSqlServer("Name=ConnectionStrings:DefaultConnection");
+                optionsBuilder.UseSqlServer("Name=ConnectionStrings:DefaultConnectionTest");
             }
         }
 
