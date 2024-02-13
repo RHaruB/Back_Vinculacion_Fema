@@ -17,11 +17,16 @@ namespace Back_Vinculacion_Fema.Models.Utilidades
                 {
                 new Claim(ClaimTypes.Name, nameUser),
                 }),
-                Expires = DateTime.UtcNow.AddMonths(1),
+                Expires = ObtenerTiempoExpiración(),
                 SigningCredentials = ObtenerCredencialesFirma()
             };
             var token = tokenHandler.CreateToken(TokenDes);
             return tokenHandler.WriteToken(token);
+        }
+
+        private static DateTime ObtenerTiempoExpiración()
+        {
+            return DateTime.UtcNow.AddMonths(1);
         }
 
         private static SigningCredentials ObtenerCredencialesFirma()
