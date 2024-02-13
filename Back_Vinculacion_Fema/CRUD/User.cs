@@ -17,9 +17,9 @@ namespace Back_Vinculacion_Fema.CRUD
             return await _context.TblFemaUsuarios.AnyAsync(u => u.UserName == userName);
         }
 
-        public TblFemaUsuario? GetUsuarioLogin(UserLoginRequest credentials, string encryptedPassword)
+        public TblFemaUsuario? GetUsuarioLogin(string userName, string encryptedPassword)
         {
-            return _context.TblFemaUsuarios.FirstOrDefault(u => u.Estado == true && u.UserName == credentials.Nombre && u.Clave == encryptedPassword);
+            return _context.TblFemaUsuarios.FirstOrDefault(u => u.Estado == true && u.UserName == userName && u.Clave == encryptedPassword);
         }
 
         public async Task<TblFemaUsuario> CrearUsuario(RegisterUserRequest request, decimal idPersona)

@@ -3,7 +3,6 @@ using Back_Vinculacion_Fema.Models.DbModels;
 using Back_Vinculacion_Fema.Models.RequestModels;
 using Back_Vinculacion_Fema.Models.Utilidades;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Back_Vinculacion_Fema.Controllers
 {
@@ -24,7 +23,7 @@ namespace Back_Vinculacion_Fema.Controllers
             var encryptedPassword = credentials.Password; //Debe consumir el metodo de cifrado
 
             User usuarioLogic = new User(_contexto);
-            var usuario = usuarioLogic.GetUsuarioLogin(credentials, encryptedPassword);
+            var usuario = usuarioLogic.GetUsuarioLogin(credentials.Nombre, encryptedPassword);
 
             if (usuario == null)
             {
