@@ -1,5 +1,6 @@
 ﻿using Back_Vinculacion_Fema.Models.DbModels;
 using Back_Vinculacion_Fema.Models.RequestModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace Back_Vinculacion_Fema.CRUD
 {
@@ -50,6 +51,15 @@ namespace Back_Vinculacion_Fema.CRUD
             {
                 throw new Exception("Error al crear la persona", ex);
             }
+        }
+
+        public async Task<bool> EliminarPersona(decimal idPersona)
+        {
+            var usuario = await _context.TblFemaPersonas
+                .FirstOrDefaultAsync(u => u.IdPersona == idPersona);
+            _context.TblFemaPersonas.Remove(usuario);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

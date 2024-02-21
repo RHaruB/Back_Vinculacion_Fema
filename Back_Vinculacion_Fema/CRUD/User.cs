@@ -17,6 +17,31 @@ namespace Back_Vinculacion_Fema.CRUD
             return await _context.TblFemaUsuarios.AnyAsync(u => u.UserName == userName);
         }
 
+        public async Task<decimal> ObtenerIdPersonaConElUsuario(string userName)
+        {
+            var usuario = await _context.TblFemaUsuarios
+                .FirstOrDefaultAsync(u => u.UserName == userName);
+
+            if (usuario != null)
+            {
+                return usuario.IdPersona;
+            }
+            else
+            {
+                return (0);
+            }
+        }
+
+        public async Task<bool> EliminarUsuario(string userName)
+        {//Previa verificación de la existencia del usuario se procede a eliminarlo de la BD
+            var usuario = await _context.TblFemaUsuarios
+                .FirstOrDefaultAsync(u => u.UserName == userName);
+            _context.TblFemaUsuarios.Remove(usuario);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+
         public TblFemaUsuario? GetUsuarioLogin(string userName, string encryptedPassword)
         {
             return _context.TblFemaUsuarios.FirstOrDefault(u => u.Estado == true && u.UserName == userName && u.Clave == encryptedPassword);
@@ -38,8 +63,9 @@ namespace Back_Vinculacion_Fema.CRUD
                     Modulo = "Estudiante",
                     Estado = true
                 };
-
+               
                 _context.TblFemaUsuarios.Add(user);
+                
                 await _context.SaveChangesAsync();
 
                 return user;
@@ -49,5 +75,7 @@ namespace Back_Vinculacion_Fema.CRUD
                 throw new Exception("Error al crear el usuario", ex);
             }
         }
+
+
     }
 }

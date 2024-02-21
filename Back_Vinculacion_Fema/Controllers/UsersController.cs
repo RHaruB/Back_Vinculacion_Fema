@@ -47,5 +47,43 @@ namespace Back_Vinculacion_Fema.Controllers
                 return StatusCode(500, "Error interno del servidor "+ ex);
             }
         }
+
+        [HttpDelete("EliminarUsuario/{UserName}")]
+        public async Task<ActionResult> DeleteUser(String UserName)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                User usuarioLogic = new User(_context);
+
+                // Verificar si el usuario existe
+                if (await usuarioLogic.ObtenerUsuario(UserName))
+                {
+                    //Almacenar el idPersona antes de la eliminación del usuario
+                    decimal idPersona = await usuarioLogic.ObtenerIdPersonaConElUsuario(UserName);
+                    // Eliminar el usuario
+                    await usuarioLogic.EliminarUsuario(UserName);
+
+                    Persona personaLogic = new Persona(_context);
+                    // Eliminar la persona asociada al usuario
+                    await personaLogic.EliminarPersona(idPersona);
+
+                    await transaction.CommitAsync();
+
+                    return Ok("Usuario eliminado exitosamente.");
+                }
+                else
+                {
+                    return Conflict("El usuario no existe.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, "Error interno del servidor " + ex.Message);
+            }
+        }
+
     }
 }
