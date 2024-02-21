@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using System.Net;
 using System.Net.Mail;
 
@@ -14,7 +15,7 @@ class Correo
         char[] letrasAleatorias = new char[4];
         for (int i = 0; i < letrasAleatorias.Length; i++)
         {
-            letrasAleatorias[i] = (char)random.Next('A', 'Z' + 1);
+            letrasAleatorias[i] = (char)random.Next('a', 'z' + 1);
         }
 
         // Último caracter: número
@@ -32,33 +33,56 @@ class Correo
         return contraseña;
     }
 
-    public static void  sendEmail()
+    public static String sendEmail(String correo, String motivo, String usuarioBD)
     {
-    
-        using SmtpClient email = new SmtpClient
+        using (MailMessage message = new MailMessage())
         {
-            DeliveryMethod = SmtpDeliveryMethod.Network,
-            UseDefaultCredentials = false,
-            EnableSsl = true,
-            Host = "smtp.gmail.com",
-            Port = 587,
-            Credentials = new NetworkCredential(GetUserName(), GetPassword())
-        };
-        //Invocacion del metodo generador de clave
-        String nuevaClave = GenerarContraseña();
-        string subject = "Recuperación de contraseña";
-        string body = "Has solicitado la recuperación de tu contraseña para el acceso a la aplicación FEMA<b>" +
-            "Tu nueva contraseña es: " + nuevaClave;
+            String retorno;
+            
+            message.BodyEncoding = System.Text.Encoding.UTF8;
+            message.From = new MailAddress(GetUserName(), "BOT FEMA");
+            if(motivo == "USUARIO")
+            {
+                message.Subject = "Recuperación de usuario";
+                message.Body = "Has solicitado la recuperación de tu usuario para el acceso a la aplicación FEMA<br>" +
+                    "<b>Tu usuario es: " + usuarioBD;
+                retorno = "";
+            }
+            else
+            {
+                //Invocacion del metodo generador de clave
+                String nuevaClave = GenerarContraseña();
+                message.Subject = "Recuperación de contraseña";
+                message.Body = "Has solicitado la recuperación de tu contraseña para el acceso a la aplicación FEMA<br>" +
+                    "<b>Tu nueva contraseña es: " + nuevaClave;
+                retorno = nuevaClave;
+            }
+            message.IsBodyHtml = true;
+            message.To.Add(correo);
 
-        try
-        {
-            email.Send(GetUserName(), ToAddress(), subject, body);
+
+            using SmtpClient email = new SmtpClient
+            {
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                EnableSsl = true,
+                Host = "smtp.gmail.com",
+                Port = 587,
+
+                Credentials = new NetworkCredential(GetUserName(), GetPassword())
+            };
+
+            try
+            {
+                email.Send(message);
+                return retorno;
+            }
+            catch (SmtpException e)
+            {
+                Console.WriteLine(e.ToString());
+                return "";
+            }
         }
-        catch(SmtpException e)
-        {
-            Console.WriteLine(e);
-        }
-        //ENVIAR post a la BD 
     }
 
     private static String GetUserName()
@@ -68,11 +92,7 @@ class Correo
 
     private static String GetPassword()
     {
-        return "Sergiodefjam18";
+        return "aueq wifu wshp sgqv";
     }
 
-    private static String ToAddress() //PARAMETRO CORREO DEL USUARIO
-    {
-        return "sergiorobles951@gmail.com";
-    }
 }

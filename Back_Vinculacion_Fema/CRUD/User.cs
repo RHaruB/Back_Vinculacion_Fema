@@ -17,6 +17,29 @@ namespace Back_Vinculacion_Fema.CRUD
             return await _context.TblFemaUsuarios.AnyAsync(u => u.UserName == userName);
         }
 
+        public async Task<String> ObtenerUsuarioConCorreo(string correo)
+        {
+            var usuario =  await _context.TblFemaUsuarios.FirstOrDefaultAsync(u => u.Correo == correo);
+            if (usuario != null)
+            {
+                return usuario.UserName;
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public async Task<bool> ActualizarClave(string userName, string claveNueva)
+        {
+            var usuario = await _context.TblFemaUsuarios.FirstOrDefaultAsync(u => u.UserName == userName);
+                usuario.Clave = claveNueva;
+                usuario.ClaveTmp = claveNueva;
+            _context.TblFemaUsuarios.Update(usuario);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<decimal> ObtenerIdPersonaConElUsuario(string userName)
         {
             var usuario = await _context.TblFemaUsuarios

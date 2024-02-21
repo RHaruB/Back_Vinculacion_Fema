@@ -3,6 +3,7 @@ using Back_Vinculacion_Fema.Models.DbModels;
 using Back_Vinculacion_Fema.Models.RequestModels;
 using Back_Vinculacion_Fema.Models.Utilidades;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Back_Vinculacion_Fema.Controllers
 {
@@ -45,6 +46,47 @@ namespace Back_Vinculacion_Fema.Controllers
             {
                 await transaction.RollbackAsync();
                 return StatusCode(500, "Error interno del servidor "+ ex);
+            }
+        }
+
+        [HttpPut("Recuperacion/{_Correo}")]                     
+        public async Task<ActionResult> Recovery(String _Correo, String motivo)
+        {
+            //motivo hace referencia a si se está recuperando la contraseña o el usuario
+            //motivo puede ser "USUARIO" o "CLAVE"
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                User usuarioLogic = new User(_context);
+
+                // Verificar si el correo está asociado a un usuario
+                String Usuario = await usuarioLogic.ObtenerUsuarioConCorreo(_Correo);
+                
+                if (Usuario.Length > 0)
+                {
+                    if (motivo == "USUARIO")
+                    {
+                        Correo.sendEmail(_Correo, "USUARIO", Usuario);
+                    }
+                    else //MOTIVO = "CLAVE"
+                    {
+                        //Se guarda la nueva clave y se la actualiza en la BD
+                        String claveNueva = Correo.sendEmail(_Correo, "CLAVE", "");
+                        await usuarioLogic.ActualizarClave(Usuario, claveNueva);
+                    }
+                    await transaction.CommitAsync();
+                    return Ok("Correo enviado exitosamente.");
+                }
+                else
+                {
+                    return Conflict("El usuario no existe.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, "Error interno del servidor " + ex.Message);
             }
         }
 
