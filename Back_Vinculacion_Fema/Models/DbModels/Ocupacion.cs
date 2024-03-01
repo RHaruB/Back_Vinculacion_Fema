@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Back_Vinculacion_Fema.Models.DbModels
+{
+    public partial class Ocupacion
+    {
+        public Ocupacion()
+        {
+            FemaOcupacions = new HashSet<FemaOcupacion>();
+        }
+
+        public int CodOcupacion { get; set; }
+        public string? Descripcion { get; set; }
+        public string? Estado { get; set; }
+
+        public virtual ICollection<FemaOcupacion> FemaOcupacions { get; set; }
+    }
+}
