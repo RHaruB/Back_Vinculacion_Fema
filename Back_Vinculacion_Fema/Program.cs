@@ -17,15 +17,28 @@ builder.Services.AddSwaggerGen();
 
 #region BD services
 builder.Services.AddDbContext<vinculacionfemaContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionTestRobles")));
+//options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionTestRobles")));
 //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionTest")));
-//options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); 
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 #endregion
 
 #region JWT services
 builder.Services.AddAuthorization();
 Token.AddJwtAuthentication(builder.Services);
 #endregion
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "API",
+                      builder =>
+                      {
+                          builder.WithHeaders("*");
+                          builder.WithOrigins("*");
+                          builder.WithMethods("*");
+                          builder.AllowAnyOrigin();
+
+                      });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -39,6 +52,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("API");
 
 app.MapControllers();
 
