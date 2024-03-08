@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:59532",
+      "applicationUrl": "http://192.168.200.23:59532",
       "sslPort": 44391
     }
   },
@@ -14,7 +14,8 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7040;http://localhost:5195",
+      //Reemplazar la IP por tu IPV4 LOCAL
+      "applicationUrl": "http://192.168.200.23:7040;http://192.168.200.23:5195",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -29,3 +30,4 @@
     }
   }
 }
+
